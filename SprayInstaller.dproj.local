@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2012/12/08 15:24:11.000.040,=C:\Users\Gage\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2012/12/08 17:58:49.000.780,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\testfiles\vmtdefs.rc</Transaction>
+    <Transaction>2012/12/08 18:04:38.000.111,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\MainU.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2012/12/08 18:04:38.000.111,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\MainU.dfm=C:\Users\Gage\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2012/12/08 18:04:52.000.510,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\SprayInstaller.dproj=C:\Users\Gage\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2012/12/08 18:44:46.000.344,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas</Transaction>
+    <Transaction>2012/12/08 18:45:02.000.629,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\SprayFileHandler.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas</Transaction>
+    <Transaction>2012/12/09 17:35:36.000.837,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.pas</Transaction>
+    <Transaction>2012/12/19 23:17:13.000.721,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.pas</Transaction>
+    <Transaction>2012/12/19 23:19:15.000.364,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\ChangelogFrmU.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.pas</Transaction>
+    <Transaction>2012/12/19 23:19:15.000.364,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\ChangelogFrmU.dfm=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.dfm</Transaction>
+    <Transaction>2012/12/25 15:12:47.000.403,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.pas</Transaction>
+    <Transaction>2012/12/25 16:50:37.000.747,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.dfm=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\AboutFrmU.dfm</Transaction>
+    <Transaction>2012/12/25 16:50:37.000.747,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit2.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\AboutFrmU.pas</Transaction>
+    <Transaction>2013/02/03 13:16:08.000.830,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas</Transaction>
+    <Transaction>2013/02/03 13:16:19.000.132,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\SprayFileHandlerClasses.pas</Transaction>
+    <Transaction>2013/02/10 00:22:22.000.576,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas</Transaction>
+    <Transaction>2013/02/10 00:22:39.000.488,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\Unit1.pas=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\SprayFileHandlerExceptions.pas</Transaction>
+    <Transaction>2013/02/10 00:52:54.000.875,=C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\gamedata\gamedata.rc</Transaction>
+    <Transaction>2013/02/10 15:41:52.744,C:\Users\Gage\Documents\RAD Studio\Projects\Vampyrium-VTFSprayHandler\testfiles\vmtdefs.rc=</Transaction>
+  </Transactions>
+</BorlandProject>

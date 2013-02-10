@@ -47,6 +47,18 @@ object ChangelogFrm: TChangelogFrm
     Lines.Strings = (
       'Vampyrium Spray Installer'
       '=========='
+      'Version 1.5.0.0'
+      ' - HUMONGOUS internal rewrite:'
+      
+        '     - Overhauled VTF/VMT export engine - less hardcoding, more ' +
+        'code legibiity'
+      '     - Added check to see if game is installed'
+      
+        '     - Force creates directories now if the proper directories d' +
+        'o not exist (reduces errors!)'
+      ' - Source code is now available!'
+      '     - https://github.com/Vampyrium/vtf-spray-installer'
+      '----------'
       'Version 1.2.1.0:'
       ' - Added an About Box'
       '----------'

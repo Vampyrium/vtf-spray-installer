@@ -51,14 +51,14 @@ type
     procedure ToggleBatchMode;
     procedure WMDROPFILES(var msg : TWMDropFiles) ; message WM_DROPFILES;
   public
-    { Public declarations }
+    SprayInstaller: TSprayFileHandler;
   end;
 
 var
   Form1: TForm1;
 
 const
-  VSI_VERSION: integer = 102010000; {mMNNRRBBBB}
+  VSI_VERSION: integer = 105000000; {mMNNRRBBBB}
 
 implementation
 
@@ -184,6 +184,11 @@ begin
   if LastVersion < VSI_VERSION then
     ChangelogFrmU.NewerVersion := true;
 
+  SprayInstaller := TSprayFileHandler.Create;
+
+  SprayInstaller.PopulateStringList(GameCmb.Items);
+  GameCmb.ItemIndex := 0;
+
   DragAcceptFiles(Handle,True);
 end;
 
@@ -191,16 +196,19 @@ procedure TForm1.GoBtnClick(Sender: TObject);
 var
   procresult: NativeInt;
 begin
-  procresult := SaveSprayToGame(SAppsDirBox.Text,VTFFileBox.Text,SUsernameCmb.Text,GameCmb.ItemIndex);
-  if procresult = 0 then begin
+  procresult := SprayInstaller.ExportFullSpray(VTFFileBox.Text,SAppsDirBox.Text,SUsernameCmb.Text,GameCmb.ItemIndex);
+  if procresult = SFH_EC_SUCCESS then begin
     StatusLbl.Color := $00008000;
     StatusLbl.Caption := Format('Successfully added spray to %s.',[GameCmb.Text]);
-  end else if procresult = 2 then begin
+  end else if procresult = SFH_EC_SPRAY_TOO_LARGE then begin
     StatusLbl.Color := $00800000;
     StatusLbl.Caption := Format('Spray is too big for %s.',[GameCmb.Text]);
-  end else if procresult = 3 then begin
+  end else if procresult = SFH_EC_INVALID_VTF_FILE then begin
     StatusLbl.Color := $0000407F;
     StatusLbl.Caption := 'This file is not a valid VTF file.';
+  end else if procresult = SFH_EC_GAME_NOT_INSTALLED then begin
+    StatusLbl.Color := $00808080;
+    StatusLbl.Caption := Format('%s is not installed.',[GameCmb.Text]);
   end else begin
     StatusLbl.Color := $00000080;
     StatusLbl.Caption := Format('Failed to add spray to %s.',[GameCmb.Text]);
@@ -217,14 +225,18 @@ begin
   toobigs := 0;
   invformats := 0;
   for i := 0 to VTFFileList.Count - 1 do begin
-    procresult := SaveSprayToGame(SAppsDirBox.Text,VTFFileList.Items.Strings[i],SUsernameCmb.Text,GameCmb.ItemIndex);
-    if procresult = 0 then
+    procresult := SprayInstaller.ExportFullSpray(VTFFileList.Items.Strings[i],SAppsDirBox.Text,SUsernameCmb.Text,GameCmb.ItemIndex);
+    if procresult = SFH_EC_SUCCESS then
       Inc(successes)
-    else if procresult = 2 then
+    else if procresult = SFH_EC_SPRAY_TOO_LARGE then
       Inc(toobigs)
-    else if procresult = 3 then
+    else if procresult = SFH_EC_INVALID_VTF_FILE then
       Inc(invformats)
-    else
+    else if procresult = SFH_EC_GAME_NOT_INSTALLED then begin
+      StatusLbl.Color := $00808080;
+      StatusLbl.Caption := Format('%s is not installed.',[GameCmb.Text]);
+      exit;
+    end else
       Inc(failures);
     StatusLbl.Caption := Format('%d/%d sprays processed.',[i+1,VTFFileList.Count]);
     StatusLbl.Repaint;
@@ -289,13 +301,15 @@ begin
   regWriter.RootKey := HKEY_CURRENT_USER;
   regWriter.OpenKey('Software\Vampyrium\SprayInstaller',true);
 
-  if NameInList = false then begin
-    ValueName := Format('Username%d',[SUsernameCmb.Items.Count]);
-    regWriter.WriteString(ValueName,SUsernameCmb.Text);
-    SUsernameCmb.Items.Append(SUsernameCmb.Text);
-  end;
+  if SUsernameCmb.Text <> '' then begin
+    if NameInList = false then begin
+      ValueName := Format('Username%d',[SUsernameCmb.Items.Count]);
+      regWriter.WriteString(ValueName,SUsernameCmb.Text);
+      SUsernameCmb.Items.Append(SUsernameCmb.Text);
+    end;
 
-  regWriter.WriteString('LastUsername',SUsernameCmb.Text);
+    regWriter.WriteString('LastUsername',SUsernameCmb.Text);
+  end;
 
   regWriter.CloseKey;
   regWriter.Free;

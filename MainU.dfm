@@ -699,16 +699,7 @@ object Form1: TForm1
     Height = 21
     Style = csDropDownList
     Anchors = [akLeft, akTop, akRight]
-    ItemIndex = 0
     TabOrder = 0
-    Text = 'Team Fortress 2'
-    Items.Strings = (
-      'Team Fortress 2'
-      'Left 4 Dead 2'
-      'Left 4 Dead'
-      'Counter-Strike: Source'
-      'Garry'#39's Mod'
-      'No More Room in Hell')
   end
   object GoBtn: TButton
     Left = 8

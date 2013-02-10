@@ -1,0 +1,24 @@
+:Team Fortress 2
+sizesupport:524288
+filelayout:1
+gamereldir:{$USERNAME}\team fortress 2\tf\
+:Left 4 Dead
+sizesupport:122880
+filelayout:2
+gamereldir:common\left 4 dead\left4dead\
+:Left 4 Dead 2
+sizesupport:122880
+filelayout:2
+gamereldir:common\left 4 dead 2\left4dead2\
+:Counter-Strike: Source
+sizesupport:524288
+filelayout:3
+gamereldir:{$USERNAME}\counter-strike source\cstrike\
+:Garry's Mod
+sizesupport:524288
+filelayout:3
+gamereldir:{$USERNAME}\garrysmod\garrysmod\
+:No More Room in Hell
+sizesupport:122880
+filelayout:3
+gamereldir:sourcemods\nmrih\

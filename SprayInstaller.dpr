@@ -1,6 +1,6 @@
 program SprayInstaller;
 
-{$R 'vmtdefs.res' 'testfiles\vmtdefs.rc'}
+{$R 'gamedata.res' 'gamedata\gamedata.rc'}
 
 uses
   Vcl.Forms,
@@ -9,7 +9,9 @@ uses
   Vcl.Themes,
   Vcl.Styles,
   ChangelogFrmU in 'ChangelogFrmU.pas' {ChangelogFrm},
-  AboutFrmU in 'AboutFrmU.pas' {AboutFrm};
+  AboutFrmU in 'AboutFrmU.pas' {AboutFrm},
+  SprayFileHandlerClasses in 'SprayFileHandlerClasses.pas',
+  SprayFileHandlerExceptions in 'SprayFileHandlerExceptions.pas';
 
 {$R *.res}
 

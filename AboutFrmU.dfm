@@ -615,7 +615,7 @@ object AboutFrm: TAboutFrm
     Height = 33
     Alignment = taCenter
     AutoSize = False
-    Caption = 'Version 1.2.1.0'
+    Caption = 'Version 1.5.0.0'
   end
   object LinkLbl: TLabel
     Left = 16
@@ -625,7 +625,7 @@ object AboutFrm: TAboutFrm
     Cursor = crHandPoint
     Alignment = taCenter
     AutoSize = False
-    Caption = 'http://vampyrium.tk/sprayinstaller.html'
+    Caption = 'http://vampyrium.tk/sprayinstaller/'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
