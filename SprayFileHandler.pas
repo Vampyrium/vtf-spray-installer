@@ -315,10 +315,6 @@ begin
     GameInfo.Free;
     LayoutInfo.Free;
   end;
-
-  // DEBUG
-  DebugDumpLayoutInfo('C:\Users\Gage\Desktop\layoutdump.txt');
-  DebugDumpGameInfo('C:\Users\Gage\Desktop\gamedump.txt');
 end;
 
 { Debug Functions }
