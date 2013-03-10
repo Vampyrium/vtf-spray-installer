@@ -10,9 +10,9 @@ gamereldir:common\left 4 dead\left4dead\
 sizesupport:122880
 filelayout:2
 gamereldir:common\left 4 dead 2\left4dead2\
-:Counter-Strike: Source
+:Counter-Strike: Source (overwrites currently-used spray)
 sizesupport:524288
-filelayout:3
+filelayout:3CSS
 gamereldir:{$USERNAME}\counter-strike source\cstrike\
 :Garry's Mod
 sizesupport:524288

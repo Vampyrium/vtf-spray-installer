@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{27356879-3782-454D-A4DB-82FD1036ACD3}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SprayInstaller.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="components\TmgWebUpdater\Packages\TmgWebUpdater150.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="updaterstub\updpack.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SprayInstaller">
+        <MSBuild Projects="SprayInstaller.dproj"/>
+    </Target>
+    <Target Name="SprayInstaller:Clean">
+        <MSBuild Projects="SprayInstaller.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SprayInstaller:Make">
+        <MSBuild Projects="SprayInstaller.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TmgWebUpdater150">
+        <MSBuild Projects="components\TmgWebUpdater\Packages\TmgWebUpdater150.dproj"/>
+    </Target>
+    <Target Name="TmgWebUpdater150:Clean">
+        <MSBuild Projects="components\TmgWebUpdater\Packages\TmgWebUpdater150.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TmgWebUpdater150:Make">
+        <MSBuild Projects="components\TmgWebUpdater\Packages\TmgWebUpdater150.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="updpack">
+        <MSBuild Projects="updaterstub\updpack.dproj"/>
+    </Target>
+    <Target Name="updpack:Clean">
+        <MSBuild Projects="updaterstub\updpack.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="updpack:Make">
+        <MSBuild Projects="updaterstub\updpack.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SprayInstaller;TmgWebUpdater150;updpack"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SprayInstaller:Clean;TmgWebUpdater150:Clean;updpack:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SprayInstaller:Make;TmgWebUpdater150:Make;updpack:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

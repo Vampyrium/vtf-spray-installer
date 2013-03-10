@@ -13,6 +13,7 @@ object AboutFrm: TAboutFrm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage
@@ -615,7 +616,7 @@ object AboutFrm: TAboutFrm
     Height = 33
     Alignment = taCenter
     AutoSize = False
-    Caption = 'Version 1.5.0.0'
+    Caption = 'Version 1.6.0.0'
   end
   object LinkLbl: TLabel
     Left = 16
@@ -625,7 +626,7 @@ object AboutFrm: TAboutFrm
     Cursor = crHandPoint
     Alignment = taCenter
     AutoSize = False
-    Caption = 'http://vampyrium.tk/sprayinstaller/'
+    Caption = 'http://vampyrium.net/sprayinstaller/'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -635,12 +636,41 @@ object AboutFrm: TAboutFrm
     OnClick = LinkLblClick
   end
   object Button1: TButton
-    Left = 125
+    Left = 205
     Top = 272
     Width = 75
     Height = 25
     Caption = 'OK'
     TabOrder = 0
     OnClick = Button1Click
+  end
+  object UpdCheckBtn: TButton
+    Left = 40
+    Top = 272
+    Width = 121
+    Height = 25
+    Caption = 'Check for Updates'
+    TabOrder = 1
+    OnClick = UpdCheckBtnClick
+  end
+  object MainWebUpdater: TmgWebUpdater
+    UpdateMode = umManual
+    DialogOptions.ProgressLabelFont.Charset = DEFAULT_CHARSET
+    DialogOptions.ProgressLabelFont.Color = clWindowText
+    DialogOptions.ProgressLabelFont.Height = -11
+    DialogOptions.ProgressLabelFont.Name = 'Tahoma'
+    DialogOptions.ProgressLabelFont.Style = []
+    DialogOptions.TitleLabelFont.Charset = DEFAULT_CHARSET
+    DialogOptions.TitleLabelFont.Color = clWindowText
+    DialogOptions.TitleLabelFont.Height = -11
+    DialogOptions.TitleLabelFont.Name = 'Tahoma'
+    DialogOptions.TitleLabelFont.Style = []
+    DialogOptions.CheckingLabelFont.Charset = DEFAULT_CHARSET
+    DialogOptions.CheckingLabelFont.Color = clWindowText
+    DialogOptions.CheckingLabelFont.Height = -11
+    DialogOptions.CheckingLabelFont.Name = 'Tahoma'
+    DialogOptions.CheckingLabelFont.Style = []
+    Left = 264
+    Top = 32
   end
 end

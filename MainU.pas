@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
   Vcl.ExtCtrls, Registry, SprayFileHandler, Vcl.FileCtrl, Winapi.Shellapi,
-  ChangelogFrmU, AboutFrmU;
+  ChangelogFrmU, AboutFrmU, GVLFileUtils;
 
 type
   TForm1 = class(TForm)
@@ -58,7 +58,7 @@ var
   Form1: TForm1;
 
 const
-  VSI_VERSION: integer = 105000000; {mMNNRRBBBB}
+  VSI_VERSION: integer = 106000000; {mMNNRRBBBB}
 
 implementation
 
@@ -188,6 +188,14 @@ begin
 
   SprayInstaller.PopulateStringList(GameCmb.Items);
   GameCmb.ItemIndex := 0;
+
+  { delete update package if it exists }
+  if FileExists(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe') then begin
+    while FileInUse(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe') do begin
+      // Do nothing
+    end;
+    DeleteFile(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe');
+  end;
 
   DragAcceptFiles(Handle,True);
 end;

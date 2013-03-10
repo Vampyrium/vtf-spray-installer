@@ -11,7 +11,8 @@ uses
   ChangelogFrmU in 'ChangelogFrmU.pas' {ChangelogFrm},
   AboutFrmU in 'AboutFrmU.pas' {AboutFrm},
   SprayFileHandlerClasses in 'SprayFileHandlerClasses.pas',
-  SprayFileHandlerExceptions in 'SprayFileHandlerExceptions.pas';
+  SprayFileHandlerExceptions in 'SprayFileHandlerExceptions.pas',
+  GVLFileUtils in 'GVLFileUtils.pas';
 
 {$R *.res}
 

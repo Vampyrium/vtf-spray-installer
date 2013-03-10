@@ -9,3 +9,10 @@ vmtout:VMT2MATVGUILOGOSUI:materials\vgui\logos\UI\{$SPRAYNAME}.vmt
 vtfout:materials\vgui\logos\{$SPRAYNAME}.vtf
 vmtout:VMT3MATVGUILOGOS:materials\vgui\logos\{$SPRAYNAME}.vmt
 vmtout:VMT3MATVGUILOGOSUI:materials\vgui\logos\{$SPRAYNAME}.vmt
+:3CSS
+vtfout:materials\vgui\logos\{$SPRAYNAME}.vtf
+vmtout:VMT3MATVGUILOGOS:materials\vgui\logos\{$SPRAYNAME}.vmt
+vmtout:VMT3MATVGUILOGOSUI:materials\vgui\logos\{$SPRAYNAME}.vmt
+vtfout:materials\vgui\logos\spray.vtf
+vmtout:VMT3MATVGUILOGOS:materials\vgui\logos\spray.vmt
+vmtout:VMT3MATVGUILOGOSUI:materials\vgui\logos\spray.vmt

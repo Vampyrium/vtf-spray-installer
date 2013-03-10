@@ -47,6 +47,13 @@ object ChangelogFrm: TChangelogFrm
     Lines.Strings = (
       'Vampyrium Spray Installer'
       '=========='
+      'Version 1.6.0.0'
+      
+        ' - Added update check feature. Just click the Vampyrium VTF Spra' +
+        'y Handler logo and Check for '
+      'Updates regularly!'
+      ' - Overwrites currently-used spray in Counter-Strike: Source'
+      '----------'
       'Version 1.5.0.0'
       ' - HUMONGOUS internal rewrite:'
       
