@@ -58,8 +58,8 @@ type TSprayFileLayout = class
   public
     constructor Create;
     destructor Destroy;
-    function GetVTFRelPath(index: NativeUInt; Username, Sprayname: string): string;
-    function GetVMTRelPath(index: NativeUInt; Username, Sprayname: string): string;
+    function GetVTFRelPath(index: NativeUInt; Sprayname: string): string;
+    function GetVMTRelPath(index: NativeUInt; Sprayname: string): string;
     function GetVMTResourceName(index: NativeUInt): string;
     procedure AddVTFRelPath(APath: string);
     procedure AddVMTRelPath(ARsrcName, APath: string);
@@ -68,16 +68,19 @@ type TSprayFileLayout = class
 
 type TSprayGameInfo = class
   private
-    FGameRelPath: string;
+    FGamePath: string;
     FGameName: string;
+    FGameShortName: string;
+    FGameRegistryName: string;
     FSizeSupport: NativeUInt;
     FPaths: TSprayFileLayout;
   public
     constructor Create;
     destructor Destroy;
-    function GetGameRelPath(Username: string): string;
     property GameName: string read FGameName write FGameName;
-    property GameRelPath: string read FGameRelPath write FGameRelPath;
+    property GameShortName: string read FGameShortName write FGameShortName;
+    property GameRegistryName: string read FGameRegistryName write FGameRegistryName;
+    property GamePath: string read FGamePath write FGamePath;
     property SizeSupport: NativeUInt read FSizeSupport write FSizeSupport;
     property Paths: TSprayFileLayout read FPaths write FPaths;
   end;
@@ -89,7 +92,7 @@ implementation
 constructor TSprayGameInfo.Create;
 begin
   FGameName := '';
-  FGameRelPath := '';
+  FGamePath := '';
   FPaths := TSprayFileLayout.Create;
 end;
 
@@ -97,11 +100,6 @@ destructor TSprayGameInfo.Destroy;
 begin
   FPaths.Free;
   inherited;
-end;
-
-function TSprayGameInfo.GetGameRelPath(Username: string): string;
-begin
-  Result := StringReplace(GameRelPath,'{$USERNAME}',Username,[rfReplaceAll]);
 end;
 
 { TSprayFileLayout }
@@ -121,24 +119,22 @@ begin
   inherited;
 end;
 
-function TSprayFileLayout.GetVTFRelPath(index: NativeUInt; Username, Sprayname: string): string;
+function TSprayFileLayout.GetVTFRelPath(index: NativeUInt; Sprayname: string): string;
 var
   ProcString: string;
 begin
   if index < Length(FVTFRelPaths) then begin
-    ProcString := StringReplace(FVTFRelPaths[index],'{$USERNAME}',Username,[rfReplaceAll]);
-    Result := StringReplace(ProcString,'{$SPRAYNAME}',Sprayname,[rfReplaceAll]);
+    Result := StringReplace(FVTFRelPaths[index],'{$SPRAYNAME}',Sprayname,[rfReplaceAll]);
   end else
     Result := SFHC_OOB;
 end;
 
-function TSprayFileLayout.GetVMTRelPath(index: NativeUInt; Username, Sprayname: string): string;
+function TSprayFileLayout.GetVMTRelPath(index: NativeUInt; Sprayname: string): string;
 var
   ProcString: string;
 begin
   if index < Length(FVMTRelPaths) then begin
-    ProcString := StringReplace(FVMTRelPaths[index],'{$USERNAME}',Username,[rfReplaceAll]);
-    Result := StringReplace(ProcString,'{$SPRAYNAME}',Sprayname,[rfReplaceAll]);
+    Result := StringReplace(FVMTRelPaths[index],'{$SPRAYNAME}',Sprayname,[rfReplaceAll]);
   end else
     Result := SFHC_OOB;
 end;

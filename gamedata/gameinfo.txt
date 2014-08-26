@@ -1,24 +1,30 @@
-:Team Fortress 2
+:Team Fortress 2 (max 512 KB)
+shortname:Team Fortress 2
 sizesupport:524288
 filelayout:1
-gamereldir:{$USERNAME}\team fortress 2\tf\
-:Left 4 Dead
-sizesupport:122880
+gamereldir:common\team fortress 2\tf\
+gamereg:TeamFortress2
+:Left 4 Dead (max 512 KB)
+shortname:Left 4 Dead
+sizesupport:524288
 filelayout:2
 gamereldir:common\left 4 dead\left4dead\
-:Left 4 Dead 2
-sizesupport:122880
+gamereg:Left4Dead
+:Left 4 Dead 2 (max 512 KB)
+shortname:Left 4 Dead 2
+sizesupport:524288
 filelayout:2
 gamereldir:common\left 4 dead 2\left4dead2\
-:Counter-Strike: Source (overwrites currently-used spray)
+gamereg:Left4Dead2
+:Counter-Strike: Source (max 512 KB, use while game is open)
+shortname:Counter-Strike: Source
 sizesupport:524288
 filelayout:3CSS
-gamereldir:{$USERNAME}\counter-strike source\cstrike\
-:Garry's Mod
+gamereldir:common\counter-strike source\cstrike\
+gamereg:CounterStrikeSource
+:Garry's Mod (max 512 KB)
+shortname:Garry's Mod
 sizesupport:524288
 filelayout:3
-gamereldir:{$USERNAME}\garrysmod\garrysmod\
-:No More Room in Hell
-sizesupport:122880
-filelayout:3
-gamereldir:sourcemods\nmrih\
+gamereldir:common\garrysmod\garrysmod\
+gamereg:GarrysMod

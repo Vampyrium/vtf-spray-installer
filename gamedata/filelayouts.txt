@@ -1,6 +1,7 @@
 :1
 vtfout:materials\vgui\logos\{$SPRAYNAME}.vtf
 vmtout:VMT1MATVGUILOGOS:materials\vgui\logos\{$SPRAYNAME}.vmt
+vmtout:VMT1MATVGUILOGOSUI:materials\vgui\logos\UI\{$SPRAYNAME}.vmt
 :2
 vtfout:materials\vgui\logos\custom\{$SPRAYNAME}.vtf
 vmtout:VMT2MATVGUILOGOSCUSTOM:materials\vgui\logos\custom\{$SPRAYNAME}.vmt

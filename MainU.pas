@@ -3,111 +3,278 @@ unit MainU;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
-  Vcl.ExtCtrls, Registry, SprayFileHandler, Vcl.FileCtrl, Winapi.Shellapi,
-  ChangelogFrmU, AboutFrmU, GVLFileUtils;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, {System.Variants,} System.Classes, {Vcl.Graphics,}
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, SprayFileHandler, Registry,
+  Winapi.Shellapi, StatusFrmU, GameFolderHintFrmU, AboutFrmU, Vcl.FileCtrl;
 
 type
-  TForm1 = class(TForm)
-    SUsernameCmb: TComboBox;
-    SUsernameLbl: TLabel;
-    GameCmb: TComboBox;
-    GameLbl: TLabel;
-    GoBtn: TButton;
-    Image1: TImage;
-    Image2: TImage;
-    VTFFileBox: TEdit;
-    VTFFileLbl: TLabel;
-    VTFOpenBtn: TButton;
-    OpenDlg: TOpenDialog;
-    SAppsDirBox: TEdit;
-    SAppsLbl: TLabel;
-    SAppsDirChooseBtn: TButton;
-    StatusLbl: TLabel;
-    BatchOneTogBtn: TButton;
-    VTFFileList: TListBox;
-    GoListBtn: TButton;
-    BatchPnl: TPanel;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    VTFFileListDelSelBtn: TButton;
+  TSprayErrorTypeCount = record
+    Successes: NativeInt;
+    GameNotInstalled: NativeInt;
+    SprayTooLarge: NativeInt;
+    InvalidVTFFile: NativeInt;
+    IOError: NativeInt;
+  end;
+
+type
+  TMain = class(TForm)
+    GameDropPanel: TPanel;
+    GameLabel: TLabel;
+    GameComboBox: TComboBox;
+    GameStatusLbl: TLabel;
+    GamePathSelBtn: TButton;
+    MainPnl: TPanel;
+    ExistingSprayList: TListBox;
+    ImportSpraysList: TListBox;
+    ExistingSprayPnl: TPanel;
+    ExistingSpraysLbl: TLabel;
+    Splitter1: TSplitter;
+    ImportSpraysPnl: TPanel;
+    ImportSpraysLbl: TLabel;
+    DeleteSprayBtn: TButton;
+    ImportSpraysBtnPnl: TPanel;
+    RemoveSpraysBtn: TButton;
+    ImportSelBtn: TButton;
+    ImportAllBtn: TButton;
+    AddSpraysBtn: TButton;
+    SprayImportDlg: TOpenDialog;
+    ClearGamePathBtn: TButton;
+    AboutBtnPnl: TPanel;
+    AboutBtn: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure SanityChange(Sender: TObject);
-    procedure VTFOpenBtnClick(Sender: TObject);
-    procedure SAppsDirChooseBtnClick(Sender: TObject);
-    procedure GoBtnClick(Sender: TObject);
-    procedure BatchOneTogBtnClick(Sender: TObject);
-    procedure VTFFileListDelSelBtnClick(Sender: TObject);
-    procedure GoListBtnClick(Sender: TObject);
-    procedure VTFFileListKeyDown(Sender: TObject; var Key: Word;
+    procedure GameComboBoxChange(Sender: TObject);
+    procedure ExistingSprayListClick(Sender: TObject);
+    procedure ExistingSprayListKeyPress(Sender: TObject; var Key: Char);
+    procedure DeleteSprayBtnClick(Sender: TObject);
+    procedure AddSpraysBtnClick(Sender: TObject);
+    procedure RemoveSpraysBtnClick(Sender: TObject);
+    procedure ListKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Image2Click(Sender: TObject);
+    procedure ImportSelBtnClick(Sender: TObject);
+    procedure ImportSpraysListClick(Sender: TObject);
+    procedure ImportSpraysListKeyPress(Sender: TObject; var Key: Char);
+    procedure ImportAllBtnClick(Sender: TObject);
+    procedure ClearGamePathBtnClick(Sender: TObject);
+    procedure GamePathSelBtnClick(Sender: TObject);
+    procedure AboutBtnClick(Sender: TObject);
   private
-    InBatchMode: boolean;
-    procedure SanityCheck;
-    procedure AddUsernameToHistory(username: string);
-    procedure ToggleBatchMode;
-    procedure WMDROPFILES(var msg : TWMDropFiles) ; message WM_DROPFILES;
+    StatusFrm: TStatusFrm;
+    procedure GameBoxChangeStatus;
+    procedure ExistingSpraysListPopulate(const path: string);
+    procedure DeleteBtnDisablerEnabler;
+    procedure ImportBtnsDisablerEnabler;
+    procedure DeleteSpray;
+    procedure AddSprayToImportList(const FileName: string);
+    procedure RemoveSpraysFromImportList;
+    function ImportSpray(index: NativeInt; var ErrorStruct: TSprayErrorTypeCount): NativeInt;
+    procedure ImportSelectedSprays;
+    procedure ImportAllSprays;
+    procedure SprayStatusUpdate(const ErrorStruct: TSprayErrorTypeCount);
+    function VTFValidate(const FileName: string): Boolean;
+    function SelectGameDirectory(index: NativeInt): Boolean;
+    procedure ClearGameDirectory(index: NativeInt);
+    procedure ShowAboutForm;
+    procedure WMDROPFILES(var msg : TWMDropFiles); message WM_DROPFILES;
   public
-    SprayInstaller: TSprayFileHandler;
+    InfoHandler: TSprayFileHandler;
   end;
 
 var
-  Form1: TForm1;
-
+  Main: TMain;
 const
-  VSI_VERSION: integer = 106000000; {mMNNRRBBBB}
+  clWindowText: Integer = -16777208;
+  clBtnFace: Integer = -16777201;
 
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.ToggleBatchMode;
+
+
+procedure TMain.FormCreate(Sender: TObject);
+var
+  regReaderSteam: TRegistry;
+  SteamApps: string;
+  i: NativeInt;
 begin
-  InBatchMode := not InBatchMode;
-  if InBatchMode then begin
-    VTFFileBox.Visible := false;
-    VTFFileLbl.Visible := false;
-    VTFOpenBtn.Visible := false;
-    SAppsLbl.Top := 101;
-    SAppsDirBox.Top := 98;
-    SAppsDirChooseBtn.Top := 98;
-    GoBtn.Top := 125;
-    BatchOneTogBtn.Top := 125;
-    BorderStyle := bsSizeable;
-    Height := 400;
-    Constraints.MinHeight := 400;
-    BatchPnl.Visible := true;
-    BatchOneTogBtn.Caption := 'Single Mode';
-    VTFFileBox.Text := '';
-    StatusLbl.Caption := 'Drag and drop VTF files onto this window to continue.';
-    BorderIcons := [biSystemMenu,biMinimize,biMaximize];
+  StatusFrm := nil;
+  regReaderSteam := TRegistry.Create;
+  regReaderSteam.RootKey := HKEY_CURRENT_USER;
+  if regReaderSteam.KeyExists('Software\Valve\Steam') then begin
+    regReaderSteam.OpenKeyReadOnly('Software\Valve\Steam');
+    SteamApps := IncludeTrailingPathDelimiter(StringReplace(regReaderSteam.ReadString('SteamPath'),'/','\',[rfReplaceAll]))+'steamapps\';
   end else begin
-    VTFFileBox.Visible := true;
-    VTFFileLbl.Visible := true;
-    VTFOpenBtn.Visible := true;
-    SAppsLbl.Top := 128;
-    SAppsDirBox.Top := 125;
-    SAppsDirChooseBtn.Top := 125;
-    GoBtn.Top := 152;
-    BatchOneTogBtn.Top := 152;
-    Constraints.MinHeight := 0;
-    Height := 230;
-    Width := 415;
-    BatchPnl.Visible := false;
-    VTFFileList.Clear;
-    WindowState := wsNormal;
-    BorderStyle := bsSingle;
-    BatchOneTogBtn.Caption := 'Batch Mode';
-    GoListBtn.Enabled := false;
-    StatusLbl.Caption := 'Input a valid VTF file and Steamapps folder to continue.';
-    BorderIcons := [biSystemMenu,biMinimize];
+    ShowMessage('Steam is not installed on this computer.');
+    Close;
+  end;
+
+  regReaderSteam.CloseKey;
+  regReaderSteam.Free;
+
+  InfoHandler := TSprayFileHandler.Create(SteamApps);
+
+  InfoHandler.PopulateStringList(GameComboBox.Items);
+
+  DragAcceptFiles(Handle,True);
+
+  for i := 1 to ParamCount do begin
+    ImportSpraysList.Items.Add(ParamStr(i));
+  end;
+
+end;
+
+procedure TMain.GameBoxChangeStatus;
+begin
+  ExistingSprayList.Clear;
+
+  GamePathSelBtn.Enabled := (GameComboBox.ItemIndex >= 0);
+  ClearGamePathBtn.Enabled := GamePathSelBtn.Enabled;
+
+  if InfoHandler.GetGamePath(GameComboBox.ItemIndex) = '' then begin
+    GameStatusLbl.Caption := 'Game is not installed, or you need to select its path.';
+    GameStatusLbl.Font.Color := $00FFFFFF;
+    GameStatusLbl.Color := $000000FF;
+  end else begin
+    GameStatusLbl.Caption := 'Game is installed. Its currently-imported sprays are listed on the right.';
+    GameStatusLbl.Font.Color := clWindowText;
+    GameStatusLbl.Color := clBtnFace;
+    ExistingSpraysListPopulate(InfoHandler.GetMainSprayPath(GameComboBox.ItemIndex));
+    ImportAllBtn.Hint := Format('Import all Sprays To Import into %s',[InfoHandler.GetGameShortName(GameComboBox.ItemIndex)]);
+    ImportSelBtn.Hint := Format('Import selected sprays into %s',[InfoHandler.GetGameShortName(GameComboBox.ItemIndex)]);
+  end;
+
+  DeleteBtnDisablerEnabler;
+  ImportBtnsDisablerEnabler;
+end;
+
+procedure TMain.ExistingSprayListClick(Sender: TObject);
+begin
+  DeleteBtnDisablerEnabler;
+end;
+
+procedure TMain.ExistingSprayListKeyPress(Sender: TObject; var Key: Char);
+begin
+  DeleteBtnDisablerEnabler
+end;
+
+procedure TMain.ExistingSpraysListPopulate(const path: string);
+var
+  VTFFiles: TSearchRec;
+begin
+  if DirectoryExists(path) then begin
+    if FindFirst(Path+'*.vtf', faAnyFile, VTFFiles) = 0 then
+      repeat
+        ExistingSprayList.Items.Add(ExtractFileName(VTFFiles.Name));
+      until FindNext(VTFFiles) <> 0;
+    FindClose(VTFFiles);
   end;
 end;
 
-procedure TForm1.WMDROPFILES(var msg: TWMDropFiles) ;
+procedure TMain.GameComboBoxChange(Sender: TObject);
+begin
+  GameBoxChangeStatus;
+end;
+
+procedure TMain.GamePathSelBtnClick(Sender: TObject);
+begin
+  SelectGameDirectory(GameComboBox.ItemIndex);
+end;
+
+procedure TMain.DeleteBtnDisablerEnabler;
+begin
+  if ExistingSprayList.ItemIndex >= 0 then
+    DeleteSprayBtn.Enabled := true
+  else
+    DeleteSprayBtn.Enabled := false;
+end;
+
+procedure TMain.ImportBtnsDisablerEnabler;
+begin
+  ImportAllBtn.Enabled := (ImportSpraysList.Count > 0) and (GameComboBox.ItemIndex >= 0)
+    and (InfoHandler.GetGamePath(GameComboBox.ItemIndex) <> '');
+  ImportSelBtn.Enabled := (ImportAllBtn.Enabled) and (ImportSpraysList.SelCount > 0);
+end;
+
+procedure TMain.ListKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = $41 {A}) and (ssCtrl in Shift) and (not (ssShift in Shift))
+    and (not (ssAlt in Shift)) then
+    TListBox(Sender).SelectAll;
+end;
+
+procedure TMain.DeleteSpray;
+var
+  i: NativeInt;
+begin
+  if MessageBox(Handle,'Do you wish to delete the selected sprays from this game?','Spray Deletion',
+    MB_YESNO or MB_ICONQUESTION) = IDYES then begin
+    for i := 0 to ExistingSprayList.Count - 1 do
+      if ExistingSprayList.Selected[i] then
+        InfoHandler.DeleteFullSpray(ChangeFileExt(ExistingSprayList.Items.Strings[i],''),
+          GameComboBox.ItemIndex);
+    ExistingSprayList.DeleteSelected;
+  end;
+end;
+
+procedure TMain.DeleteSprayBtnClick(Sender: TObject);
+begin
+  DeleteSpray;
+end;
+
+procedure TMain.AddSpraysBtnClick(Sender: TObject);
+var
+  i: NativeInt;
+begin
+  if SprayImportDlg.Execute then
+    for i := 0 to SprayImportDlg.Files.Count - 1 do
+      AddSprayToImportList(SprayImportDlg.Files.Strings[i]);
+end;
+
+procedure TMain.AddSprayToImportList(const FileName: string);
+begin
+  if FileExists(FileName) and VTFValidate(FileName) and (ImportSpraysList.Items.IndexOf(FileName) = -1) then
+    ImportSpraysList.Items.Add(FileName);
+
+  ImportBtnsDisablerEnabler;
+end;
+
+procedure TMain.AboutBtnClick(Sender: TObject);
+begin
+  ShowAboutForm;
+end;
+
+procedure TMain.RemoveSpraysBtnClick(Sender: TObject);
+begin
+  RemoveSpraysFromImportList;
+end;
+
+procedure TMain.RemoveSpraysFromImportList;
+begin
+  ImportSpraysList.DeleteSelected;
+  ImportBtnsDisablerEnabler;
+end;
+
+function TMain.VTFValidate(const FileName: string): Boolean;
+var
+  VTFFile: File;
+  TestVar: Cardinal;
+begin
+  FileMode := fmOpenRead;
+  AssignFile(VTFFile,FileName);
+  Reset(VTFFile,4);
+
+  if not eof(VTFFile) then
+    BlockRead(VTFFile,TestVar,1)
+  else
+    TestVar := 0;
+
+  CloseFile(VTFFile);
+
+  Result := (TestVar = VTF_MAGIC);
+end;
+
+procedure TMain.WMDROPFILES(var msg: TWMDropFiles) ;
 const
   MAXFILENAME = 4095;
 var
@@ -122,236 +289,187 @@ begin
   begin
     DragQueryFile(msg.Drop, cnt, fileName, MAXFILENAME) ;
 
-    if not InBatchMode then VTFFileBox.Text := fileName
-      else VTFFileList.Items.Append(fileName);
-  end;
-
-  if InBatchMode then begin
-    GoListBtn.Enabled := true;
-    StatusLbl.Caption := 'Ready.';
+    AddSprayToImportList(fileName);
   end;
 
   //release memory
-  DragFinish(msg.Drop) ;
+  DragFinish(msg.Drop);
 end;
 
-procedure TForm1.BatchOneTogBtnClick(Sender: TObject);
+function TMain.ImportSpray(index: NativeInt; var ErrorStruct: TSprayErrorTypeCount): NativeInt;
 begin
-  ToggleBatchMode;
+  if StatusFrm = nil then
+    StatusFrm := TStatusFrm.Create(Self);
+
+  Result := InfoHandler.ExportFullSpray(ImportSpraysList.Items.Strings[index],GameComboBox.ItemIndex);
+  if Result = SFH_EC_SUCCESS then begin
+    Inc(ErrorStruct.Successes);
+    StatusFrm.StatusMemo.Lines.Append(Format('%s: import successful!',[ImportSpraysList.Items.Strings[index]]));
+  end else if Result = SFH_EC_GAME_NOT_INSTALLED then begin
+    Inc(ErrorStruct.GameNotInstalled);
+    StatusFrm.StatusMemo.Lines.Append(Format('(!) %s: game not installed',[ImportSpraysList.Items.Strings[index]]));
+  end else if Result = SFH_EC_SPRAY_TOO_LARGE then begin
+    Inc(ErrorStruct.SprayTooLarge);
+    StatusFrm.StatusMemo.Lines.Append(Format('(!) %s: spray too large',[ImportSpraysList.Items.Strings[index]]));
+  end else if Result = SFH_EC_INVALID_VTF_FILE then begin
+    Inc(ErrorStruct.InvalidVTFFile);
+    StatusFrm.StatusMemo.Lines.Append(Format('(!) %s: invalid VTF file',[ImportSpraysList.Items.Strings[index]]));
+  end else if Result = SFH_EC_IO_ERROR then begin
+    Inc(ErrorStruct.IOError);
+    StatusFrm.StatusMemo.Lines.Append(Format('(!) %s: I/O error',[ImportSpraysList.Items.Strings[index]]));
+  end;
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMain.ImportSpraysListClick(Sender: TObject);
+begin
+  ImportBtnsDisablerEnabler;
+end;
+
+procedure TMain.ImportSpraysListKeyPress(Sender: TObject; var Key: Char);
+begin
+  ImportBtnsDisablerEnabler;
+end;
+
+procedure TMain.ImportSelBtnClick(Sender: TObject);
+begin
+  ImportSelectedSprays;
+end;
+
+procedure TMain.ImportSelectedSprays;
 var
-  regReaderSteam: TRegistry;
-  regReaderVamp: TRegistry;
+  Errors: TSprayErrorTypeCount;
   i: NativeInt;
-  LastVersion: integer;
 begin
-  LastVersion := 0;
-  Height := 230;
-  InBatchMode := false;
-  regReaderSteam := TRegistry.Create();
-  regReaderSteam.RootKey := HKEY_CURRENT_USER;
-  regReaderVamp := TRegistry.Create();
-  regReaderVamp.RootKey := HKEY_CURRENT_USER;
-  if regReaderSteam.KeyExists('Software\Valve\Steam') then begin
-    regReaderSteam.OpenKeyReadOnly('Software\Valve\Steam');
-    SAppsDirBox.Text := IncludeTrailingBackslash(StringReplace(regReaderSteam.ReadString('SteamPath'),'/','\',[rfReplaceAll]))+'steamapps';
-  end;
-  if regReaderVamp.KeyExists('Software\Vampyrium\SprayInstaller') then begin
-    regReaderVamp.OpenKey('Software\Vampyrium\SprayInstaller',false);
-    i := 0;
-    while regReaderVamp.ValueExists(Format('Username%d',[i])) do begin
-      SUsernameCmb.Items.Append(regReaderVamp.ReadString(Format('Username%d',[i])));
-      Inc(i);
+  // initialize error counts
+  Errors.Successes := 0;
+  Errors.GameNotInstalled := 0;
+  Errors.SprayTooLarge := 0;
+  Errors.InvalidVTFFile := 0;
+  Errors.IOError := 0;
+
+  // clear status window if it exists
+  if StatusFrm <> nil then
+    StatusFrm.StatusMemo.Clear;
+
+  // Go!
+  for i := 0 to ImportSpraysList.Count - 1 do begin
+    if ImportSpraysList.Selected[i] then begin
+      ImportSpray(i,Errors);
     end;
-    if regReaderVamp.ValueExists('LastUsername') then begin
-      SUsernameCmb.Text := regReaderVamp.ReadString('LastUsername');
-    end;
-    if regReaderVamp.ValueExists('LastVersion') then begin
-      LastVersion := regReaderVamp.ReadInteger('LastVersion');
-    end;
-    if LastVersion < VSI_VERSION then
-      regReaderVamp.WriteInteger('LastVersion',VSI_VERSION);
-  end;
-  regReaderSteam.CloseKey;
-  regReaderSteam.Free;
-  regReaderVamp.CloseKey;
-  regReaderVamp.Free;
-
-  if ParamCount >= 1 then VTFFileBox.Text := ParamStr(1);
-
-  if LastVersion < VSI_VERSION then
-    ChangelogFrmU.NewerVersion := true;
-
-  SprayInstaller := TSprayFileHandler.Create;
-
-  SprayInstaller.PopulateStringList(GameCmb.Items);
-  GameCmb.ItemIndex := 0;
-
-  { delete update package if it exists }
-  if FileExists(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe') then begin
-    while FileInUse(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe') do begin
-      // Do nothing
-    end;
-    DeleteFile(ExtractFilePath(Application.ExeName) + 'vampyrium_vtfsi_updpack.exe');
   end;
 
-  DragAcceptFiles(Handle,True);
+  // Update status label
+  SprayStatusUpdate(Errors);
 end;
 
-procedure TForm1.GoBtnClick(Sender: TObject);
+procedure TMain.ImportAllBtnClick(Sender: TObject);
+begin
+  ImportAllSprays;
+end;
+
+procedure TMain.ImportAllSprays;
 var
-  procresult: NativeInt;
-begin
-  procresult := SprayInstaller.ExportFullSpray(VTFFileBox.Text,SAppsDirBox.Text,SUsernameCmb.Text,GameCmb.ItemIndex);
-  if procresult = SFH_EC_SUCCESS then begin
-    StatusLbl.Color := $00008000;
-    StatusLbl.Caption := Format('Successfully added spray to %s.',[GameCmb.Text]);
-  end else if procresult = SFH_EC_SPRAY_TOO_LARGE then begin
-    StatusLbl.Color := $00800000;
-    StatusLbl.Caption := Format('Spray is too big for %s.',[GameCmb.Text]);
-  end else if procresult = SFH_EC_INVALID_VTF_FILE then begin
-    StatusLbl.Color := $0000407F;
-    StatusLbl.Caption := 'This file is not a valid VTF file.';
-  end else if procresult = SFH_EC_GAME_NOT_INSTALLED then begin
-    StatusLbl.Color := $00808080;
-    StatusLbl.Caption := Format('%s is not installed.',[GameCmb.Text]);
-  end else begin
-    StatusLbl.Color := $00000080;
-    StatusLbl.Caption := Format('Failed to add spray to %s.',[GameCmb.Text]);
-  end;
-  AddUsernameToHistory(SUsernameCmb.Text);
-end;
-
-procedure TForm1.GoListBtnClick(Sender: TObject);
-var
-  successes,failures,toobigs,invformats,i,procresult: NativeInt;
-begin
-  successes := 0;
-  failures := 0;
-  toobigs := 0;
-  invformats := 0;
-  for i := 0 to VTFFileList.Count - 1 do begin
-    procresult := SprayInstaller.ExportFullSpray(VTFFileList.Items.Strings[i],SAppsDirBox.Text,SUsernameCmb.Text,GameCmb.ItemIndex);
-    if procresult = SFH_EC_SUCCESS then
-      Inc(successes)
-    else if procresult = SFH_EC_SPRAY_TOO_LARGE then
-      Inc(toobigs)
-    else if procresult = SFH_EC_INVALID_VTF_FILE then
-      Inc(invformats)
-    else if procresult = SFH_EC_GAME_NOT_INSTALLED then begin
-      StatusLbl.Color := $00808080;
-      StatusLbl.Caption := Format('%s is not installed.',[GameCmb.Text]);
-      exit;
-    end else
-      Inc(failures);
-    StatusLbl.Caption := Format('%d/%d sprays processed.',[i+1,VTFFileList.Count]);
-    StatusLbl.Repaint;
-  end;
-  if failures = 0 then begin
-    StatusLbl.Color := $00008000;
-    StatusLbl.Caption := Format('Successfully added %d spray(s) to %s.',[successes,GameCmb.Text]);
-  end else if successes > 0 then begin
-    StatusLbl.Color := $00008080;
-    StatusLbl.Caption := Format('Successfully added %d spray(s) to %s; %d failed.',[successes,GameCmb.Text,failures]);
-  end else begin
-    StatusLbl.Color := $00000080;
-    StatusLbl.Caption := Format('Failed to add %d spray(s) to %s.',[failures,GameCmb.Text]);
-  end;
-  if (failures = 0) and (successes = 0) then StatusLbl.Color := $00000000;
-  if toobigs > 0 then begin
-    StatusLbl.Color := StatusLbl.Color + $00800000;
-    StatusLbl.Caption := StatusLbl.Caption + Format(' %d spray(s) were too big for the game.',[toobigs]);
-  end;
-  if invformats > 0 then begin
-    StatusLbl.Color := StatusLbl.Color + $0000407F;
-    StatusLbl.Caption := StatusLbl.Caption + Format(' %d file(s) were in the wrong format.',[invformats]);
-  end;
-  VTFFileList.Clear;
-  GoListBtn.Enabled := false;
-  AddUsernameToHistory(SUsernameCmb.Text);
-end;
-
-procedure TForm1.Image2Click(Sender: TObject);
-begin
-  AboutFrm.ShowModal;
-end;
-
-procedure TForm1.SanityCheck;
-begin
-  StatusLbl.Color := $00252525;
-  GoBtn.Enabled := FileExists(VTFFileBox.Text) and DirectoryExists(SAppsDirBox.Text);
-  if GoBtn.Enabled then begin
-    StatusLbl.Caption := 'Ready.';
-  end else begin
-    StatusLbl.Caption := 'Input a valid VTF file and Steamapps folder to continue.';
-  end;
-end;
-
-procedure TForm1.AddUsernameToHistory(username: string);
-var
-  NameInList: boolean;
+  Errors: TSprayErrorTypeCount;
   i: NativeInt;
-  regWriter: TRegistry;
-  ValueName: string;
 begin
-  i := 0;
-  NameInList := false;
+  // initialize error counts
+  Errors.Successes := 0;
+  Errors.GameNotInstalled := 0;
+  Errors.SprayTooLarge := 0;
+  Errors.InvalidVTFFile := 0;
+  Errors.IOError := 0;
 
-  while i < SUsernameCmb.Items.Count do begin
-    if username = SUsernameCmb.Items.Strings[i] then
-      NameInList := true;
-    Inc(i);
+  // clear status window if it exists
+  if StatusFrm <> nil then
+    StatusFrm.StatusMemo.Clear;
+
+  // Go!
+  for i := 0 to ImportSpraysList.Count - 1 do begin
+    ImportSpray(i,Errors);
   end;
 
-  regWriter := TRegistry.Create;
-  regWriter.RootKey := HKEY_CURRENT_USER;
-  regWriter.OpenKey('Software\Vampyrium\SprayInstaller',true);
-
-  if SUsernameCmb.Text <> '' then begin
-    if NameInList = false then begin
-      ValueName := Format('Username%d',[SUsernameCmb.Items.Count]);
-      regWriter.WriteString(ValueName,SUsernameCmb.Text);
-      SUsernameCmb.Items.Append(SUsernameCmb.Text);
-    end;
-
-    regWriter.WriteString('LastUsername',SUsernameCmb.Text);
-  end;
-
-  regWriter.CloseKey;
-  regWriter.Free;
+  // Update status label
+  SprayStatusUpdate(Errors);
 end;
 
-procedure TForm1.SAppsDirChooseBtnClick(Sender: TObject);
+procedure TMain.SprayStatusUpdate(const ErrorStruct: TSprayErrorTypeCount);
+begin
+  if ErrorStruct.Successes = 0 then begin
+    GameStatusLbl.Color := $000000FF;
+    GameStatusLbl.Font.Color := $00FFFFFF;
+    GameStatusLbl.Caption := 'No successful spray imports. Details in status window.';
+    if StatusFrm <> nil then
+      StatusFrm.Show;
+  end else if (ErrorStruct.GameNotInstalled > 0) or
+    (ErrorStruct.SprayTooLarge > 0) or (ErrorStruct.InvalidVTFFile > 0) or
+    (ErrorStruct.IOError > 0) then begin
+    GameStatusLbl.Color := $0000FFFF;
+    GameStatusLbl.Font.Color := $00000000;
+    GameStatusLbl.Caption := 'Some sprays did not import properly. Details in status window.';
+    ExistingSprayList.Clear;
+    ExistingSpraysListPopulate(InfoHandler.GetMainSprayPath(GameComboBox.ItemIndex));
+    if StatusFrm <> nil then
+      StatusFrm.Show;
+  end else begin
+    GameStatusLbl.Color := $0000FF00;
+    GameStatusLbl.Font.Color := $00000000;
+    GameStatusLbl.Caption := 'All sprays were imported successfully!';
+    FreeAndNil(StatusFrm);
+    ExistingSprayList.Clear;
+    ExistingSpraysListPopulate(InfoHandler.GetMainSprayPath(GameComboBox.ItemIndex));
+  end;
+end;
+
+function TMain.SelectGameDirectory(index: NativeInt): Boolean;
 var
-  SDir: string;
+  DSCaption,Dir: string;
+  HintFrm: TGameFolderHintFrm;
 begin
-  if SelectDirectory('Browse for the Steamapps folder.','',SDir) then
-    SAppsDirBox.Text := SDir;
+  HintFrm := TGameFolderHintFrm.Create(Self);
+  HintFrm.Show;
+  DSCaption := Format('Game Directory for %s',[InfoHandler.GetGameShortName(index)]);
+
+  if SelectDirectory(DSCaption,'',Dir,[],Self) then begin
+    Dir := IncludeTrailingPathDelimiter(Dir);
+    Result := InfoHandler.SetGamePath(index,Dir);
+    if Result then begin
+      GameBoxChangeStatus;
+      GameStatusLbl.Caption := Format('Game install path changed to %s',[Dir]);
+      GameStatusLbl.Color := $00FF0000;
+      GameStatusLbl.Font.Color := $00FFFFFF;
+    end else begin
+      GameStatusLbl.Caption := Format('Invalid directory. Game install path not changed.',[Dir]);
+      GameStatusLbl.Color := $00800000;
+      GameStatusLbl.Font.Color := $00FFFFFF;
+    end;
+  end else begin
+    Result := false;
+  end;
+
+  HintFrm.Free;
 end;
 
-procedure TForm1.VTFFileListDelSelBtnClick(Sender: TObject);
+procedure TMain.ClearGameDirectory(index: NativeInt);
 begin
-  VTFFileList.DeleteSelected;
-  if VTFFileList.Count = 0 then GoListBtn.Enabled := false;
+  InfoHandler.ClearGamePath(index);
+  GameBoxChangeStatus;
+  GameStatusLbl.Caption := 'Game install path information cleared from application. Select a different path or restart application to rescan.';
+  GameStatusLbl.Color := $00808080;
+  GameStatusLbl.Font.Color := $00FFFFFF;
 end;
 
-procedure TForm1.VTFFileListKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TMain.ClearGamePathBtnClick(Sender: TObject);
 begin
-  if ([ssShift, ssAlt] * Shift = []) and (ssCtrl in Shift) and (Key = $41{A}) then
-    VTFFileList.SelectAll;
+  ClearGameDirectory(GamecomboBox.ItemIndex);
 end;
 
-procedure TForm1.VTFOpenBtnClick(Sender: TObject);
+procedure TMain.ShowAboutForm;
+var
+  AboutForm: TAboutFrm;
 begin
-  if OpenDlg.Execute then VTFFileBox.Text := OpenDlg.FileName;
-end;
-
-procedure TForm1.SanityChange(Sender: TObject);
-begin
-  SanityCheck;
+  AboutForm := TAboutFrm.Create(Self);
+  AboutForm.ShowModal;
+  AboutForm.Free;
 end;
 
 end.
