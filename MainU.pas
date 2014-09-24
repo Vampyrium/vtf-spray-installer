@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, {System.Variants,} System.Classes, {Vcl.Graphics,}
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, SprayFileHandler, Registry,
-  Winapi.Shellapi, StatusFrmU, GameFolderHintFrmU, AboutFrmU, Vcl.FileCtrl;
+  Winapi.Shellapi, StatusFrmU, GameFolderHintFrmU, AboutFrmU, Vcl.FileCtrl, VTFPrevFrmU;
 
 type
   TSprayErrorTypeCount = record
@@ -57,10 +57,14 @@ type
     procedure ClearGamePathBtnClick(Sender: TObject);
     procedure GamePathSelBtnClick(Sender: TObject);
     procedure AboutBtnClick(Sender: TObject);
+    procedure ExistingSprayListDblClick(Sender: TObject);
+    procedure ExistingSprayListKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     StatusFrm: TStatusFrm;
     procedure GameBoxChangeStatus;
     procedure ExistingSpraysListPopulate(const path: string);
+    procedure PreviewSpray(index: NativeInt);
     procedure DeleteBtnDisablerEnabler;
     procedure ImportBtnsDisablerEnabler;
     procedure DeleteSpray;
@@ -123,6 +127,13 @@ begin
 
 end;
 
+procedure TMain.PreviewSpray(index: NativeInt);
+begin
+  VTFPrevForm.LoadImage(InfoHandler.GetMainSprayPath(GameComboBox.ItemIndex) + ExistingSprayList.Items.Strings[index]);
+  VTFPrevForm.Show;
+  Show;
+end;
+
 procedure TMain.GameBoxChangeStatus;
 begin
   ExistingSprayList.Clear;
@@ -150,6 +161,20 @@ end;
 procedure TMain.ExistingSprayListClick(Sender: TObject);
 begin
   DeleteBtnDisablerEnabler;
+end;
+
+procedure TMain.ExistingSprayListDblClick(Sender: TObject);
+begin
+  PreviewSpray(ExistingSprayList.ItemIndex);
+end;
+
+procedure TMain.ExistingSprayListKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  ListKeyDown(Sender,Key,Shift);
+  if (Key = $0D {Enter}) and (not ( ssCtrl in Shift)) and (not (ssShift in Shift))
+    and (not (ssAlt in Shift)) then
+    PreviewSpray(ExistingSprayList.ItemIndex);
 end;
 
 procedure TMain.ExistingSprayListKeyPress(Sender: TObject; var Key: Char);

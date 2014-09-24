@@ -1,7 +1,7 @@
 object Main: TMain
   Left = 0
   Top = 0
-  Caption = 'Vampyrium Spray Importer 2.0.1.0'
+  Caption = 'Vampyrium Spray Importer 2.1.0.0'
   ClientHeight = 243
   ClientWidth = 584
   Color = clBtnFace
@@ -28,7 +28,6 @@ object Main: TMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 528
     DesignSize = (
       568
       34)
@@ -61,7 +60,6 @@ object Main: TMain
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       OnChange = GameComboBoxChange
-      ExplicitWidth = 316
     end
     object GamePathSelBtn: TButton
       Left = 393
@@ -78,7 +76,6 @@ object Main: TMain
       ShowHint = True
       TabOrder = 1
       OnClick = GamePathSelBtnClick
-      ExplicitLeft = 353
     end
     object ClearGamePathBtn: TButton
       Left = 472
@@ -93,7 +90,6 @@ object Main: TMain
       ShowHint = True
       TabOrder = 2
       OnClick = ClearGamePathBtnClick
-      ExplicitLeft = 432
     end
   end
   object MainPnl: TPanel
@@ -109,9 +105,8 @@ object Main: TMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 528
     object Splitter1: TSplitter
-      Left = 304
+      Left = 288
       Top = 0
       Width = 8
       Height = 152
@@ -119,32 +114,30 @@ object Main: TMain
       AutoSnap = False
       MinSize = 256
       ResizeStyle = rsUpdate
-      ExplicitLeft = 316
-      ExplicitTop = -2
+      ExplicitLeft = 290
     end
     object ExistingSprayPnl: TPanel
-      Left = 312
+      Left = 296
       Top = 0
-      Width = 256
+      Width = 272
       Height = 152
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 272
       object ExistingSpraysLbl: TLabel
         Left = 0
         Top = 0
-        Width = 256
+        Width = 272
         Height = 13
         Align = alTop
         Alignment = taCenter
-        Caption = 'Sprays In Game'
-        ExplicitWidth = 76
+        Caption = 'Sprays In Game (double-click to show selected spray)'
+        ExplicitWidth = 256
       end
       object ExistingSprayList: TListBox
         Left = 0
         Top = 13
-        Width = 256
+        Width = 272
         Height = 114
         Align = alClient
         ItemHeight = 13
@@ -152,34 +145,37 @@ object Main: TMain
         Sorted = True
         TabOrder = 0
         OnClick = ExistingSprayListClick
-        OnKeyDown = ListKeyDown
+        OnDblClick = ExistingSprayListDblClick
+        OnKeyDown = ExistingSprayListKeyDown
         OnKeyPress = ExistingSprayListKeyPress
+        ExplicitWidth = 256
       end
       object DeleteSprayBtn: TButton
         Left = 0
         Top = 127
-        Width = 256
+        Width = 272
         Height = 25
         Align = alBottom
         Caption = 'Delete Spray...'
         Enabled = False
         TabOrder = 1
         OnClick = DeleteSprayBtnClick
+        ExplicitWidth = 256
       end
     end
     object ImportSpraysPnl: TPanel
       Left = 0
       Top = 0
-      Width = 304
+      Width = 288
       Height = 152
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 264
+      ExplicitWidth = 304
       object ImportSpraysLbl: TLabel
         Left = 0
         Top = 0
-        Width = 304
+        Width = 288
         Height = 13
         Align = alTop
         Alignment = taCenter
@@ -189,7 +185,7 @@ object Main: TMain
       object ImportSpraysList: TListBox
         Left = 0
         Top = 13
-        Width = 304
+        Width = 288
         Height = 89
         Align = alClient
         ItemHeight = 13
@@ -199,21 +195,20 @@ object Main: TMain
         OnClick = ImportSpraysListClick
         OnKeyDown = ListKeyDown
         OnKeyPress = ImportSpraysListKeyPress
-        ExplicitWidth = 264
+        ExplicitWidth = 304
       end
       object ImportSpraysBtnPnl: TPanel
         Left = 0
         Top = 102
-        Width = 304
+        Width = 288
         Height = 50
         Align = alBottom
         AutoSize = True
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 101
-        ExplicitWidth = 264
+        ExplicitWidth = 304
         object RemoveSpraysBtn: TButton
-          Left = 109
+          Left = 93
           Top = 0
           Width = 94
           Height = 25
@@ -224,11 +219,10 @@ object Main: TMain
           ShowHint = True
           TabOrder = 2
           OnClick = RemoveSpraysBtnClick
-          ExplicitLeft = 50
-          ExplicitTop = -6
+          ExplicitLeft = 109
         end
         object ImportSelBtn: TButton
-          Left = 203
+          Left = 187
           Top = 0
           Width = 101
           Height = 25
@@ -240,12 +234,12 @@ object Main: TMain
           ShowHint = True
           TabOrder = 1
           OnClick = ImportSelBtnClick
-          ExplicitLeft = 288
+          ExplicitLeft = 203
         end
         object ImportAllBtn: TButton
           Left = 0
           Top = 25
-          Width = 304
+          Width = 288
           Height = 25
           Hint = 'Import all Sprays To Import into %s'
           Align = alBottom
@@ -255,18 +249,18 @@ object Main: TMain
           ShowHint = True
           TabOrder = 0
           OnClick = ImportAllBtnClick
-          ExplicitWidth = 264
+          ExplicitWidth = 304
         end
         object AddSpraysBtn: TButton
           Left = 0
           Top = 0
-          Width = 109
+          Width = 93
           Height = 25
           Align = alClient
           Caption = 'Add Sprays...'
           TabOrder = 3
           OnClick = AddSpraysBtnClick
-          ExplicitWidth = 105
+          ExplicitWidth = 109
         end
       end
     end
@@ -280,7 +274,6 @@ object Main: TMain
     AutoSize = True
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 528
     DesignSize = (
       568
       33)
@@ -298,7 +291,6 @@ object Main: TMain
       Caption = 'About...'
       TabOrder = 0
       OnClick = AboutBtnClick
-      ExplicitLeft = 472
     end
   end
   object SprayImportDlg: TOpenDialog
